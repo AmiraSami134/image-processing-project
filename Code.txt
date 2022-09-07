@@ -1,0 +1,473 @@
+Name: amira sami saad omar
+Sec:1
+Academic Number:1700067
+
+CODE:
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 31 06:32:30 2022
+
+@author: Options
+"""
+
+from tkinter import *
+from PIL import ImageTk,Image
+from tkinter import filedialog 
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
+root = Tk()
+root.title('IMAGE PROCESSING PROJECT')
+
+framed=LabelFrame(root,text="Operations",fg="green",bg="white")
+framed.grid(row=0,column=0)
+framea=LabelFrame(framed,text="view image options",padx=61,bg="white",fg="blue")
+framea.grid(row=0,column=0)     
+frame1 =LabelFrame(framea,text="load image", fg="red",bg="white",padx=10,pady=20)
+frame1.grid(row=0,column=0)    
+frame2 =LabelFrame(framea,text="convert image", fg="red",bg="white",padx=20,pady=20)
+frame2.grid(row=0,column=1)
+frameb=LabelFrame(framed,bg="white")
+frameb.grid(row=1,column=0) 
+frame3 =LabelFrame(frameb,text="point transport ops", fg="red",bg="white",padx=25,pady=15)
+frame3.grid(row=0,column=0)    
+frame4 =LabelFrame(frameb,text="local transform ops", fg="red",bg="white",padx=55,pady=10)
+frame4.grid(row=1,column=0)
+frame5 =LabelFrame(frameb,text="global transform ops", fg="red",bg="white",padx=87,pady=10)
+frame5.grid(row=2,column=0)
+framec=LabelFrame(root,text="images",fg="green",bg="white",pady=10)
+framec.grid(row=0,column=1) 
+frame6 =LabelFrame(framec,text="original image",fg="red",padx=10,pady=10)
+frame6.grid(row=0,column=2)
+frame7 =LabelFrame(framec,text="the resault", fg="red",bg="white" , padx=10,pady=10)
+frame7.grid(row=1,column=2)
+frame8=LabelFrame(frameb,text="saving the resaults",bg="white",padx=10,pady=10,fg="blue")
+frame8.grid(row=3,column=0)
+frame9=LabelFrame(frame3,bg="white")
+frame9.grid(row=3,column=1)
+frame10=LabelFrame(frame3,bg="white")
+frame10.grid(row=3,column=0)
+frame11 =LabelFrame(frame7,text="resault image")
+frame11.grid(row=0,column=0)
+frame12 =LabelFrame(frame7,text="noisy image")
+frame12.grid(row=0,column=1)
+canvas1= Canvas(frame6, width=200, height= 200,bg="white")
+canvas1.pack()
+canvas2= Canvas(frame11, width=200, height= 200,bg="white")
+canvas2.pack()
+canvas3= Canvas(frame12, width=200, height= 200,bg="white")
+canvas3.pack()
+
+def convert(image):
+     in_img=image
+     resized_image= in_img.resize((200,200), Image.ANTIALIAS)
+     new_image= ImageTk.PhotoImage(resized_image)
+     return new_image
+
+def select_image():
+    global im_path,out_img1
+    root.filename= filedialog.askopenfilename(initialdir=" D:\ " , title="select an image", filetypes=(("jpg files", "*.jpg"),("all files","*.*")) )
+    im_path=root.filename
+    img1 = cv2.imread(im_path)
+    cv2.imwrite('a2.jpg',img1)
+    in_img=(Image.open("a2.jpg"))
+    resized_image= in_img.resize((200,200), Image.ANTIALIAS)
+    out_img1= ImageTk.PhotoImage(resized_image)
+    c1=canvas1.create_image(100,100, anchor="center", image = out_img1)
+myButton= Button(frame1, text="select image", command= select_image )
+myButton.grid(row=0,column=0)
+  
+def read_image():
+    img1 = cv2.imread(im_path)
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    return img 
+
+def TO_RGB():
+    global out_img,new_img
+    img1 = cv2.imread(im_path)
+    cv2.imwrite('a3.jpg',img1)
+    in_img=(Image.open("a3.jpg"))
+    out_img= convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img) 
+myButton= Button(frame2, text=" RGB image", command= TO_RGB)
+myButton.grid(row=0, column=0)
+
+def TO_GRAY ():
+    global out_img,new_img
+    img_g=read_image()
+    new_img = cv2.cvtColor(img_g, cv2.COLOR_RGB2GRAY)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img= convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame2, text=" Gray Scale image", command= TO_GRAY )
+myButton.grid(row=0,column=1)
+
+def flip_ver():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    new_img = cv2.flip(img, 0)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame3, text=" flip image verticaly", command= flip_ver ,padx=37)
+myButton.grid(row=0,column=0)
+
+def flip_hor():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    new_img = cv2.flip(img, 1)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame3, text=" flip image horizontally", command= flip_hor ,padx=35)
+myButton.grid(row=0,column=1)
+
+def crop():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    upper = 50
+    lower = 550
+    left = 50
+    right = 550
+    new_img = img[upper: lower,left:right,:]
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame3, text=" crop image ", command= crop ,padx=55)
+myButton.grid(row=1,column=0)
+
+def plot_his():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    hist = cv2.calcHist([img],[0], None, [256], [0,256])
+    intensity_values = np.array([x for x in range(hist.shape[0])])
+    plt.bar(intensity_values, hist[:,0], width = 5)
+    plt.title("image histogram")
+    plt.savefig('a4.jpg')
+    in_img=(Image.open("a4.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame3, text=" plot image histogram ", command= plot_his ,padx=35)
+myButton.grid(row=1,column=1)
+
+def brightness_low():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    alpha = 1 # Simple contrast control
+    beta = -50   # Simple brightness control   
+    new_img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame10, text=" image low brightness ", command= brightness_low )
+myButton.grid(row=0,column=0)
+
+def brightness_high():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    alpha = 1 # Simple contrast control
+    beta = 100   # Simple brightness control   
+    new_img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame10, text=" image high brightness ", command= brightness_high )
+myButton.grid(row=0,column=1)
+
+def contrast_low():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    alpha = .5 # Simple contrast control
+    beta = 0   # Simple brightness control   
+    new_img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame9, text=" image low contrast ", command= contrast_low )
+myButton.grid(row=0,column=0)
+
+def contrast_high():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    alpha = 1.5 # Simple contrast control
+    beta = 0   # Simple brightness control   
+    new_img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame9, text=" image high contrast ", command= contrast_high )
+myButton.grid(row=0,column=1)
+
+def histogram_equal():
+    global out_img,new_img
+    img1=read_image()
+    img_g = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    new_img = cv2.equalizeHist(img_g)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame3, text=" histogram equalization for image", command= histogram_equal )
+myButton.grid(row=2,column=0)
+
+def adaptive_thresh ():
+    global out_img,new_img
+    img1=read_image()
+    img_g = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    new_img = cv2.adaptiveThreshold(img_g, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame3, text="apply adaptive threshold to image", command= adaptive_thresh , padx=5)
+myButton.grid(row=2,column=1)
+
+def scaling():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    new_img = cv2.resize(img,None,fx=3, fy=1.5, interpolation = cv2.INTER_CUBIC)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame4, text="image scaling", command= scaling,padx=3 )
+myButton.grid(row=0,column=0)
+
+def transporting():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    rows,cols = img.shape[:2]
+    M = np.float32([[1,0,100],[0,1,50]])
+    new_img = cv2.warpAffine(img,M,(cols,rows))
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame4, text="image transporting", command= transporting ,padx=3 )
+myButton.grid(row=0,column=1)
+
+def rotate():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    height, width = img.shape[:2]
+    center = (width/2, height/2)
+    rotate_matrix = cv2.getRotationMatrix2D(center=center, angle=45, scale=1)
+    new_img = cv2.warpAffine(src=img, M=rotate_matrix, dsize=(width, height))
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame4, text="image rotation", command= rotate )
+myButton.grid(row=1,column=0)
+
+def smooth():
+    global out_img,new_img,out_img2
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    def add_noise(img):
+        row , col = img.shape[:2]
+        number_of_pixels = random.randint(300, 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 255
+        number_of_pixels = random.randint(300 , 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 0 
+        return img
+    noise=add_noise(img)
+    cv2.imwrite('noise.jpg',noise)
+    in_img1=(Image.open("noise.jpg"))
+    out_img2=convert(in_img1)
+    new_img = cv2.blur(img,(10,10))
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+    c3=canvas3.create_image(100,100, anchor="center", image = out_img2)
+myButton= Button(frame4, text="image smothing", command= smooth,padx=10 )
+myButton.grid(row=1,column=1)
+
+def gaussian():
+    global out_img,new_img,out_img2
+    img1=read_image() 
+    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    def add_noise(img):
+        row , col = img.shape
+        number_of_pixels = random.randint(300, 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 255
+        number_of_pixels = random.randint(300 , 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 0 
+        return img
+    noise=add_noise(gray)
+    cv2.imwrite('noise.jpg',noise)
+    in_img1=(Image.open("noise.jpg"))
+    out_img2=convert(in_img1)
+    new_img = cv2.GaussianBlur(gray,(3,3),0)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+    c3=canvas3.create_image(100,100, anchor="center", image = out_img2)
+myButton= Button(frame4, text="apply gaussian filter to image", command= gaussian )
+myButton.grid(row=2,column=0)
+
+def average_f():
+    global out_img,new_img,out_img2
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    def add_noise(img):
+        row , col = img.shape[:2]
+        number_of_pixels = random.randint(300, 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 255
+        number_of_pixels = random.randint(300 , 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 0 
+        return img
+    noise=add_noise(img)
+    cv2.imwrite('noise.jpg',noise)
+    in_img1=(Image.open("noise.jpg"))
+    out_img2=convert(in_img1)
+    kernel = np.ones((5,5),np.float32)/20
+    new_img = cv2.filter2D(img,-1,kernel)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+    c3=canvas3.create_image(100,100, anchor="center", image = out_img2)
+myButton= Button(frame4, text="apply average filter to image", command= average_f )
+myButton.grid(row=2,column=1)
+
+def sobel_f():
+    global out_img,new_img
+    img1=read_image()
+    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    def add_noise(img):
+        row , col = img.shape[:2]
+        number_of_pixels = random.randint(300, 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 255
+        number_of_pixels = random.randint(300 , 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 0 
+        return img
+    noise=add_noise(gray)
+    cv2.imwrite('noise.jpg',noise)
+    in_img1=(Image.open("noise.jpg"))
+    out_img2=convert(in_img1)
+    img_gaussian = cv2.GaussianBlur(gray,(3,3),0)
+    img_sobelx = cv2.Sobel(img_gaussian,cv2.CV_8U,1,0,ksize=5)
+    img_sobely = cv2.Sobel(img_gaussian,cv2.CV_8U,0,1,ksize=5)
+    new_img = img_sobelx + img_sobely
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+    c3=canvas3.create_image(100,100, anchor="center", image = out_img2)
+myButton= Button(frame4, text="apply sobel filter to image", command= sobel_f,padx=10 )
+myButton.grid(row=3,column=0)
+
+def median():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    def add_noise(img):
+        row , col = img.shape[:2]
+        number_of_pixels = random.randint(300, 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 255
+        number_of_pixels = random.randint(300 , 10000)
+        for i in range(number_of_pixels):
+            y_coord=random.randint(0, row - 1)
+            x_coord=random.randint(0, col - 1)
+            img[y_coord][x_coord] = 0 
+        return img
+    noise=add_noise(img)
+    cv2.imwrite('noise.jpg',noise)
+    in_img1=(Image.open("noise.jpg"))
+    out_img2=convert(in_img1)
+    new_img = cv2.medianBlur(img,5)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+    c3=canvas3.create_image(100,100, anchor="center", image = out_img2)
+myButton= Button(frame4, text="apply median filter to image", command= median )
+myButton.grid(row=3,column=1)
+
+def erosion():
+    global out_img,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    kernel = np.ones((5,5), np.uint8) 
+    new_img = cv2.erode(img, kernel, iterations=1)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame5, text="apply erosion to image", command= erosion)
+myButton.grid(row=0,column=0)
+
+def dilation():
+    global out_img ,new_img
+    img1=read_image()
+    img = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+    kernel = np.ones((5,5), np.uint8) 
+    new_img = cv2.dilate(img, kernel, iterations=1)
+    cv2.imwrite('a3.jpg',new_img)
+    in_img=(Image.open("a3.jpg"))
+    out_img=convert(in_img)
+    c2=canvas2.create_image(100,100, anchor="center", image = out_img)
+myButton= Button(frame5, text="apply dilation to image", command= dilation )
+myButton.grid(row=0,column=1)
+
+def save_resault():
+    cv2.imwrite("the resault image.jpg",new_img)    
+myButton= Button(frame8, text=" save resault image" ,command= save_resault)
+myButton.grid(row=0,column=0)
+
+
+root.mainloop()
+
+
+
